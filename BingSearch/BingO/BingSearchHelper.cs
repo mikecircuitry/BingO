@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Web;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using BingO.Exceptions;
 
 namespace BingO
 {
@@ -57,8 +58,24 @@ namespace BingO
             Debug.WriteLine(uri.ToString());
             var response = await client.GetAsync(uri);
             string respString = await response.Content.ReadAsStringAsync();
+            var searchResult = Newtonsoft.Json.JsonConvert.DeserializeObject<SearchResult>(respString);
 
-            return Newtonsoft.Json.JsonConvert.DeserializeObject<SearchResult>(respString);
+            if(searchResult._type == null)
+            {
+                BingSearchException exception = Newtonsoft.Json.JsonConvert.DeserializeObject<BingSearchException>(respString);
+                switch(exception.StatusCode)
+                {
+                    case 403:
+                        throw new OutOfCallVolumeQuotaException();
+                        break;
+                    case 401:
+                        throw new AccessDeniedException();
+                        break;
+                    case 429:
+                        throw new RateLimitExceededException();
+                }
+            }
+            return searchResult;
         }
     }
 }

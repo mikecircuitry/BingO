@@ -19,7 +19,7 @@ namespace BingSearch
                 ///NB: This should be done asynchronously...
                 SearchResult result = BingSearchHelper.Query("Bill Gates",
                     new BingQueryParameters(
-                    apiKey: "APPKEY",
+                    apiKey: "",
                     count: 10,
                     offset: 0,
                     mkt: "en-us",
@@ -41,19 +41,7 @@ namespace BingSearch
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
 
 
 
